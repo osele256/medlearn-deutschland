@@ -140,17 +140,27 @@ Respond naturally as the patient. Format as JSON:
       score: suggestions.length === 0 ? 100 : Math.max(0, 100 - suggestions.length * 5),
     };
   }
-} capabilities;
-    } catch (error) {
-      logger.error('ai.capabilities.error', { error });
-      return {
-        prompt: 'unavailable',
-        translator: 'unavailable',
-        rewriter: 'unavailable',
-        lastChecked: Date.now(),
-      };
-    }
+private async getCapabilities(): Promise<CapabilitiesResult> {
+  try {
+    const capabilities = await window.ai.languageModel.capabilities();
+    // You can do something with capabilities here if needed
+    return {
+      prompt: capabilities.prompt || 'available',
+      translator: capabilities.translator || 'available',
+      rewriter: capabilities.rewriter || 'available',
+      lastChecked: Date.now(),
+    };
+  } catch (error) {
+    logger.error('ai.capabilities.error', { error });
+    return {
+      prompt: 'unavailable',
+      translator: 'unavailable',
+      rewriter: 'unavailable',
+      lastChecked: Date.now(),
+    };
   }
+}
+
 
   private async checkPromptAPI(): Promise<'available' | 'downloading' | 'unavailable'> {
     if (!window.ai?.languageModel) return 'unavailable';
@@ -484,11 +494,16 @@ Format as JSON:
   }
 
   private parseScenarioResponse(response: string, params: ScenarioParams): Scenario {
-    try {
-      // Extract JSON from response (AI might add extra text)
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('No JSON found in response');
+  try {
+    // Extract JSON from response (AI might add extra text)
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON found in response');
 
-      const parsed = JSON.parse(jsonMatch[0]);
-      
-      return
+    const parsed = JSON.parse(jsonMatch[0]);
+    
+    return parsed;
+  } catch (error) {
+    console.error('Error parsing scenario response:', error);
+    throw error; // or return a default Scenario object if needed
+  }
+}}
