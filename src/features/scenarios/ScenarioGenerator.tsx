@@ -41,6 +41,7 @@ export function ScenarioGenerator() {
   const handleStartDialogue = () => {
     if (currentScenario) {
       startDialogue(currentScenario);
+      onStartDialogue?.();
     }
   };
 
