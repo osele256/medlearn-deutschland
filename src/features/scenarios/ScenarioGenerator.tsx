@@ -10,6 +10,8 @@ const SPECIALTIES: { value: MedicalSpecialty; label: string }[] = [
   { value: 'surgery', label: 'Surgery / Chirurgie' },
   { value: 'psychiatry', label: 'Psychiatry / Psychiatrie' },
   { value: 'neurology', label: 'Neurology / Neurologie' },
+  { value: 'nursing', label: 'Nursing Care / Krankenpflege' },
+  { value: 'geriatrics', label: 'Geriatric Care / Altenpflege' },
 ];
 
 const DIFFICULTIES: { value: DifficultyLevel; label: string; description: string }[] = [
