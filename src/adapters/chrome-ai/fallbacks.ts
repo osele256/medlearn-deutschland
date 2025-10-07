@@ -207,6 +207,78 @@ const CACHED_SCENARIOS: Record<string, Scenario[]> = {
       createdAt: Date.now(),
     },
   ],
+  nursing: [
+    {
+      id: "cached-nursing-1",
+      specialty: "nursing",
+      difficulty: "beginner",
+      title: "Wound Care Assessment",
+      description:
+        "An 80-year-old patient has a pressure ulcer on the sacrum (Stage II). The wound is 3cm in diameter with slight drainage. Patient is bed-bound but cooperative.",
+      chiefComplaint: "Pressure ulcer care",
+      vitalSigns: {
+        bp: "130/85",
+        hr: 78,
+        rr: 16,
+        temp: 36.8,
+        spo2: 96,
+      },
+      createdAt: Date.now(),
+    },
+    {
+      id: "cached-nursing-2",
+      specialty: "nursing",
+      difficulty: "intermediate",
+      title: "Medication Administration",
+      description:
+        "Patient receiving multiple medications via NG tube. Needs assistance with daily wound dressing change and mobility. Family requesting education on home care.",
+      chiefComplaint: "Complex medication management",
+      vitalSigns: {
+        bp: "140/90",
+        hr: 82,
+        rr: 18,
+        temp: 37.2,
+        spo2: 94,
+      },
+      createdAt: Date.now(),
+    },
+  ],
+  geriatrics: [
+    {
+      id: "cached-geri-1",
+      specialty: "geriatrics",
+      difficulty: "beginner",
+      title: "Fall Risk Assessment",
+      description:
+        "An 85-year-old female with recent fall at home. Patient lives alone, uses walker. Daughter concerned about safety. Patient has mild cognitive impairment.",
+      chiefComplaint: "Fall prevention and safety assessment",
+      vitalSigns: {
+        bp: "145/88",
+        hr: 72,
+        rr: 16,
+        temp: 36.5,
+        spo2: 97,
+      },
+      createdAt: Date.now(),
+    },
+    {
+      id: "cached-geri-2",
+      specialty: "geriatrics",
+      difficulty: "intermediate",
+      title: "Polypharmacy Management",
+      description:
+        "A 78-year-old male taking 12 different medications. Reports confusion about medication schedule. Recent hospitalization for dizziness. Lives with spouse.",
+      chiefComplaint: "Medication review and simplification",
+      vitalSigns: {
+        bp: "138/82",
+        hr: 68,
+        rr: 14,
+        temp: 36.9,
+        spo2: 98,
+      },
+      createdAt: Date.now(),
+    },
+  ],
 };
 
 const CACHED_DIALOGUE_RESPONSES: DialogueResponse[] = [
