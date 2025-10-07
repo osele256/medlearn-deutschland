@@ -40,7 +40,7 @@ export function ConversationHistory({ messages }: ConversationHistoryProps) {
       {messages.map((message) => {
         const showTranslation = translatedMessages.has(message.id);
         const isPatient = message.role === 'patient';
-
+        
         return (
           <div
             key={message.id}
@@ -48,15 +48,17 @@ export function ConversationHistory({ messages }: ConversationHistoryProps) {
           >
             <div className={`max-w-[75%] ${isPatient ? 'space-y-2' : ''}`}>
               <div
-                className={`rounded-lg px-4 py-3 ${message.role === 'doctor'
+                className={`rounded-lg px-4 py-3 ${
+                  message.role === 'doctor'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-900'
-                  }`}
+                }`}
               >
                 {/* Role Label */}
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-xs font-semibold ${message.role === 'doctor' ? 'text-blue-200' : 'text-gray-500'
-                    }`}>
+                  <span className={`text-xs font-semibold ${
+                    message.role === 'doctor' ? 'text-blue-200' : 'text-gray-500'
+                  }`}>
                     {message.role === 'doctor' ? (
                       <>
                         <svg className="inline h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -73,8 +75,9 @@ export function ConversationHistory({ messages }: ConversationHistoryProps) {
                       </>
                     )}
                   </span>
-                  <span className={`text-xs ${message.role === 'doctor' ? 'text-blue-200' : 'text-gray-400'
-                    }`}>
+                  <span className={`text-xs ${
+                    message.role === 'doctor' ? 'text-blue-200' : 'text-gray-400'
+                  }`}>
                     {new Date(message.timestamp).toLocaleTimeString('de-DE', {
                       hour: '2-digit',
                       minute: '2-digit'
