@@ -36,12 +36,14 @@ export interface AICapabilities {
 
 // Domain types for business logic
 export type MedicalSpecialty =
-  | 'cardiology'
-  | 'pediatrics'
-  | 'emergency'
-  | 'surgery'
-  | 'psychiatry'
-  | 'neurology';
+  | "cardiology"
+  | "pediatrics"
+  | "emergency"
+  | "surgery"
+  | "psychiatry"
+  | "neurology"
+  | "nursing"
+  | "geriatrics";
 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 
