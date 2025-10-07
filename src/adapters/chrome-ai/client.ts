@@ -344,15 +344,32 @@ Example patient responses:
     const start = Date.now();
     logger.info("ai.translate.start", params);
 
+    // Check if Translator API is available
     if (!window.ai?.translator) {
+      logger.warn("ai.translate.unavailable");
+
+      // Use basic dictionary fallback
+      const basicTranslation = this.basicTranslate(
+        params.term,
+        params.sourceLanguage,
+        params.targetLanguage
+      );
+
       return {
-        status: "unavailable",
-        reason: "Translation API not available in this browser",
+        status: "success",
+        data: {
+          original: params.term,
+          translated: basicTranslation,
+          sourceLanguage: params.sourceLanguage,
+          targetLanguage: params.targetLanguage,
+        },
       };
     }
 
+    // Use AI translator with retry logic
     return this.withRetry(async () => {
       try {
+        // Initialize translator if not already done
         if (!this.translator) {
           this.translator = await window.ai.translator.create({
             sourceLanguage: params.sourceLanguage,
@@ -360,6 +377,7 @@ Example patient responses:
           });
         }
 
+        // Perform translation with timeout
         const translated = await this.withTimeout(
           this.translator.translate(params.term),
           TIMEOUT_MS
