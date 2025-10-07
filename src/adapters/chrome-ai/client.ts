@@ -569,4 +569,45 @@ Format as JSON:
       throw error; // or return a default Scenario object if needed
     }
   }
+  private basicTranslate(term: string, source: string, target: string): string {
+    // Basic medical dictionary EN <-> DE
+    const dictionary: Record<string, string> = {
+      // EN -> DE
+      "heart attack": "Herzinfarkt",
+      "chest pain": "Brustschmerzen",
+      "shortness of breath": "Atemnot",
+      fever: "Fieber",
+      headache: "Kopfschmerzen",
+      "blood pressure": "Blutdruck",
+      diabetes: "Diabetes",
+      infection: "Infektion",
+      surgery: "Operation",
+      medication: "Medikament",
+      diagnosis: "Diagnose",
+      treatment: "Behandlung",
+      symptoms: "Symptome",
+      prescription: "Rezept",
+      emergency: "Notfall",
+
+      // DE -> EN (reverse lookup)
+      herzinfarkt: "heart attack",
+      brustschmerzen: "chest pain",
+      atemnot: "shortness of breath",
+      fieber: "fever",
+      kopfschmerzen: "headache",
+      blutdruck: "blood pressure",
+      diabetes: "diabetes",
+      infektion: "infection",
+      operation: "surgery",
+      medikament: "medication",
+      diagnose: "diagnosis",
+      behandlung: "treatment",
+      symptome: "symptoms",
+      rezept: "prescription",
+      notfall: "emergency",
+    };
+
+    const lowerTerm = term.toLowerCase();
+    return dictionary[lowerTerm] || `[Translation unavailable: ${term}]`;
+  }
 }
