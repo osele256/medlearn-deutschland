@@ -1,7 +1,7 @@
 // src/adapters/chrome-ai/types.ts
 // Internal adapter types - isolate app from Chrome AI changes
 
-export type AIResultStatus = 'success' | 'error' | 'unavailable' | 'loading';
+export type AIResultStatus = "success" | "error" | "unavailable" | "loading";
 
 export interface AIError {
   code: AIErrorCode;
@@ -12,25 +12,25 @@ export interface AIError {
 }
 
 export type AIErrorCode =
-  | 'API_UNAVAILABLE'
-  | 'API_NOT_READY'
-  | 'TIMEOUT'
-  | 'RATE_LIMITED'
-  | 'INVALID_INPUT'
-  | 'INVALID_RESPONSE'
-  | 'SESSION_LOST'
-  | 'UNKNOWN';
+  | "API_UNAVAILABLE"
+  | "API_NOT_READY"
+  | "TIMEOUT"
+  | "RATE_LIMITED"
+  | "INVALID_INPUT"
+  | "INVALID_RESPONSE"
+  | "SESSION_LOST"
+  | "UNKNOWN";
 
 export type AIResult<T> =
-  | { status: 'success'; data: T }
-  | { status: 'error'; error: AIError }
-  | { status: 'unavailable'; reason: string }
-  | { status: 'loading' };
+  | { status: "success"; data: T }
+  | { status: "error"; error: AIError }
+  | { status: "unavailable"; reason: string }
+  | { status: "loading" };
 
 export interface AICapabilities {
-  prompt: 'available' | 'downloading' | 'unavailable';
-  translator: 'available' | 'downloading' | 'unavailable';
-  rewriter: 'available' | 'downloading' | 'unavailable';
+  prompt: "available" | "downloading" | "unavailable";
+  translator: "available" | "downloading" | "unavailable";
+  rewriter: "available" | "downloading" | "unavailable";
   lastChecked: number;
 }
 
@@ -45,7 +45,7 @@ export type MedicalSpecialty =
   | "nursing"
   | "geriatrics";
 
-export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
+export type DifficultyLevel = "beginner" | "intermediate" | "advanced";
 
 export interface ScenarioParams {
   specialty: MedicalSpecialty;
@@ -77,7 +77,7 @@ export interface DialogueContext {
 
 export interface DialogueMessage {
   id: string;
-  role: 'doctor' | 'patient';
+  role: "doctor" | "patient";
   content: string;
   timestamp: number;
 }
@@ -106,7 +106,7 @@ export interface TranslationResult {
 export interface GrammarSuggestion {
   original: string;
   suggestion: string;
-  type: 'grammar' | 'spelling' | 'style' | 'clarity';
+  type: "grammar" | "spelling" | "style" | "clarity";
   position: {
     start: number;
     end: number;
@@ -125,20 +125,22 @@ export interface GrammarCheckResult {
 export interface ChromeAIAdapter {
   // Capability checking
   checkCapabilities(): Promise<AICapabilities>;
-  
+
   // Prompt API
   generateScenario(params: ScenarioParams): Promise<AIResult<Scenario>>;
   simulateDialogue(
     message: string,
     context: DialogueContext
   ): Promise<AIResult<DialogueResponse>>;
-  
+
   // Translator API
-  translateTerm(params: TranslationParams): Promise<AIResult<TranslationResult>>;
-  
+  translateTerm(
+    params: TranslationParams
+  ): Promise<AIResult<TranslationResult>>;
+
   // Rewriter API (used for grammar checking)
   checkGrammar(text: string): Promise<AIResult<GrammarCheckResult>>;
-  
+
   // Cleanup
   destroy(): void;
 }
