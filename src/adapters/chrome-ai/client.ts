@@ -69,32 +69,35 @@ export class ChromeAIClient implements ChromeAIAdapter {
     context: DialogueContext
   ): string {
     const historyText = context.history
-      .slice(-10) // Last 10 messages for context
+      .slice(-10)
       .map((msg) => `${msg.role}: ${msg.content}`)
       .join("\n");
 
     const scenarioContext = context.scenario
-      ? `\nScenario: ${context.scenario.description}\nChief Complaint: ${context.scenario.chiefComplaint}`
+      ? `\nSzenario: ${context.scenario.description}\nHauptbeschwerde: ${context.scenario.chiefComplaint}`
       : "";
 
-    return `You are a patient in a German medical consultation. Respond primarily in German with occasional English medical terms when appropriate.${scenarioContext}
+    return `Du bist ein deutscher Patient in einer medizinischen Konsultation. Du sprichst NUR DEUTSCH. Der Arzt versucht, mit dir auf Deutsch zu kommunizieren.${scenarioContext}
 
-Previous conversation:
+Bisheriges Gespräch:
 ${historyText}
 
-Doctor: ${message}
+Arzt: ${message}
 
-Respond naturally as the patient IN GERMAN. Use everyday German that a real patient would use. Mix in English medical terms if the patient would be confused or uncertain. Format as JSON:
+WICHTIG: Antworte AUSSCHLIESSLICH auf Deutsch, wie ein echter deutscher Patient. Benutze alltägliche Sprache, keine medizinischen Fachbegriffe. Du kannst unsicher oder besorgt klingen.
+
+Antworte im JSON-Format:
 {
-  "message": "Deine Antwort auf Deutsch (Your response in German)",
+  "message": "Deine Antwort komplett auf Deutsch",
   "emotion": "calm|anxious|relieved|confused",
-  "suggestions": ["mögliche Folgefrage 1", "mögliche Frage 2"]
+  "suggestions": []
 }
 
-Example patient responses:
-- "Ja, die Schmerzen haben vor etwa zwei Stunden angefangen."
-- "Ich bin nicht sicher... maybe it's the medication?"
-- "Es tut hier weh." (points to chest)`;
+Beispiel guter Antworten:
+- "Ja, die Schmerzen haben vor zwei Stunden angefangen, hier in der Brust."
+- "Ich weiß nicht genau... es fühlt sich komisch an."
+- "Nein, so etwas hatte ich noch nie."
+- "Muss ich ins Krankenhaus? Ich habe Angst."`;
   }
 
   private parseDialogueResponse(response: string): DialogueResponse {
