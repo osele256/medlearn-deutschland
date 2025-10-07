@@ -1,7 +1,7 @@
 // src/adapters/chrome-ai/fallbacks.ts
 // Cached content for offline/unavailable scenarios
 
-import { Scenario, ScenarioParams, DialogueResponse } from './types';
+import { Scenario, ScenarioParams, DialogueResponse } from "./types";
 
 const CACHED_SCENARIOS: Record<string, Scenario[]> = {
   cardiology: [
@@ -283,12 +283,13 @@ const CACHED_SCENARIOS: Record<string, Scenario[]> = {
 
 const CACHED_DIALOGUE_RESPONSES: DialogueResponse[] = [
   {
-    message: "The pain started suddenly while I was watching TV. It feels like pressure on my chest.",
+    message:
+      "The pain started suddenly while I was watching TV. It feels like pressure on my chest.",
     emotion: "anxious",
     suggestions: [
       "Does the pain radiate anywhere?",
       "Have you had similar episodes before?",
-      "Are you taking any medications?"
+      "Are you taking any medications?",
     ],
   },
   {
@@ -296,41 +297,44 @@ const CACHED_DIALOGUE_RESPONSES: DialogueResponse[] = [
     emotion: "anxious",
   },
   {
-    message: "I have diabetes and high blood pressure. I take metformin and lisinopril.",
+    message:
+      "I have diabetes and high blood pressure. I take metformin and lisinopril.",
     emotion: "calm",
   },
   {
-    message: "The pain is about 7 out of 10. It's worse when I take a deep breath.",
+    message:
+      "The pain is about 7 out of 10. It's worse when I take a deep breath.",
     emotion: "uncomfortable",
   },
   {
-    message: "No, I've never had anything like this before. Should I be worried?",
+    message:
+      "No, I've never had anything like this before. Should I be worried?",
     emotion: "anxious",
   },
 ];
 
 export function getCachedScenario(params: ScenarioParams): Scenario {
   const scenarios = CACHED_SCENARIOS[params.specialty] || [];
-  
+
   // Try to find matching difficulty
-  const match = scenarios.find(s => s.difficulty === params.difficulty);
+  const match = scenarios.find((s) => s.difficulty === params.difficulty);
   if (match) return { ...match, id: `cached-${Date.now()}` };
-  
+
   // Fallback to any scenario in specialty
   if (scenarios.length > 0) {
     return { ...scenarios[0], id: `cached-${Date.now()}` };
   }
-  
+
   // Ultimate fallback
   return {
     id: `fallback-${Date.now()}`,
     specialty: params.specialty,
     difficulty: params.difficulty,
-    title: 'Sample Medical Scenario',
+    title: "Sample Medical Scenario",
     description: `This is a sample ${params.difficulty} level ${params.specialty} scenario. The Chrome AI API is currently unavailable, so this cached content is being displayed instead.`,
-    chiefComplaint: 'Sample chief complaint',
+    chiefComplaint: "Sample chief complaint",
     vitalSigns: {
-      bp: '120/80',
+      bp: "120/80",
       hr: 75,
       rr: 16,
       temp: 37.0,
@@ -341,7 +345,9 @@ export function getCachedScenario(params: ScenarioParams): Scenario {
 }
 
 export function getCachedDialogueResponse(): DialogueResponse {
-  const randomIndex = Math.floor(Math.random() * CACHED_DIALOGUE_RESPONSES.length);
+  const randomIndex = Math.floor(
+    Math.random() * CACHED_DIALOGUE_RESPONSES.length
+  );
   return CACHED_DIALOGUE_RESPONSES[randomIndex];
 }
 

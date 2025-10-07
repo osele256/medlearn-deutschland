@@ -20,7 +20,7 @@ const DIFFICULTIES: { value: DifficultyLevel; label: string; description: string
   { value: 'advanced', label: 'Advanced', description: 'Complex clinical scenarios' },
 ];
 
-export function ScenarioGenerator() {
+export function ScenarioGenerator({ onStartDialogue }: ScenarioGeneratorProps = {}) {
   const [specialty, setSpecialty] = useState<MedicalSpecialty>('cardiology');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('beginner');
 
