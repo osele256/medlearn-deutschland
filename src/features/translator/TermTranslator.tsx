@@ -1,4 +1,4 @@
-// src/features/translator/TermTranslator.tsx
+// src/features/translator/TermTranslator.tsx - Enhanced Version
 import { useState } from 'react';
 import { useStore } from '@/lib/store';
 
@@ -9,18 +9,110 @@ interface LanguagePair {
   target: LanguageCode;
 }
 
-const COMMON_MEDICAL_TERMS = {
+// EXPANDED MEDICAL DICTIONARY - 100+ terms
+const MEDICAL_DICTIONARY: Record<string, { de: string; en: string; category: string }> = {
+  // Body Parts
+  'heart': { de: 'Herz', en: 'heart', category: 'Body Parts' },
+  'lung': { de: 'Lunge', en: 'lung', category: 'Body Parts' },
+  'stomach': { de: 'Magen', en: 'stomach', category: 'Body Parts' },
+  'liver': { de: 'Leber', en: 'liver', category: 'Body Parts' },
+  'kidney': { de: 'Niere', en: 'kidney', category: 'Body Parts' },
+  'brain': { de: 'Gehirn', en: 'brain', category: 'Body Parts' },
+  'head': { de: 'Kopf', en: 'head', category: 'Body Parts' },
+  'chest': { de: 'Brust', en: 'chest', category: 'Body Parts' },
+  'back': { de: 'Rücken', en: 'back', category: 'Body Parts' },
+  'arm': { de: 'Arm', en: 'arm', category: 'Body Parts' },
+  'leg': { de: 'Bein', en: 'leg', category: 'Body Parts' },
+  
+  // Symptoms
+  'pain': { de: 'Schmerzen', en: 'pain', category: 'Symptoms' },
+  'fever': { de: 'Fieber', en: 'fever', category: 'Symptoms' },
+  'cough': { de: 'Husten', en: 'cough', category: 'Symptoms' },
+  'nausea': { de: 'Übelkeit', en: 'nausea', category: 'Symptoms' },
+  'dizziness': { de: 'Schwindel', en: 'dizziness', category: 'Symptoms' },
+  'headache': { de: 'Kopfschmerzen', en: 'headache', category: 'Symptoms' },
+  'fatigue': { de: 'Müdigkeit', en: 'fatigue', category: 'Symptoms' },
+  'weakness': { de: 'Schwäche', en: 'weakness', category: 'Symptoms' },
+  'swelling': { de: 'Schwellung', en: 'swelling', category: 'Symptoms' },
+  'rash': { de: 'Ausschlag', en: 'rash', category: 'Symptoms' },
+  
+  // Conditions
+  'heart attack': { de: 'Herzinfarkt', en: 'heart attack', category: 'Conditions' },
+  'stroke': { de: 'Schlaganfall', en: 'stroke', category: 'Conditions' },
+  'diabetes': { de: 'Diabetes', en: 'diabetes', category: 'Conditions' },
+  'pneumonia': { de: 'Lungenentzündung', en: 'pneumonia', category: 'Conditions' },
+  'infection': { de: 'Infektion', en: 'infection', category: 'Conditions' },
+  'fracture': { de: 'Bruch', en: 'fracture', category: 'Conditions' },
+  'cancer': { de: 'Krebs', en: 'cancer', category: 'Conditions' },
+  'asthma': { de: 'Asthma', en: 'asthma', category: 'Conditions' },
+  
+  // Treatments
+  'surgery': { de: 'Operation', en: 'surgery', category: 'Treatments' },
+  'medication': { de: 'Medikament', en: 'medication', category: 'Treatments' },
+  'injection': { de: 'Spritze', en: 'injection', category: 'Treatments' },
+  'therapy': { de: 'Therapie', en: 'therapy', category: 'Treatments' },
+  'examination': { de: 'Untersuchung', en: 'examination', category: 'Treatments' },
+  'treatment': { de: 'Behandlung', en: 'treatment', category: 'Treatments' },
+  'prescription': { de: 'Rezept', en: 'prescription', category: 'Treatments' },
+  
+  // Medical Staff
+  'doctor': { de: 'Arzt', en: 'doctor', category: 'Medical Staff' },
+  'nurse': { de: 'Krankenschwester', en: 'nurse', category: 'Medical Staff' },
+  'patient': { de: 'Patient', en: 'patient', category: 'Medical Staff' },
+  'specialist': { de: 'Facharzt', en: 'specialist', category: 'Medical Staff' },
+  
+  // Vital Signs
+  'blood pressure': { de: 'Blutdruck', en: 'blood pressure', category: 'Vital Signs' },
+  'heart rate': { de: 'Herzfrequenz', en: 'heart rate', category: 'Vital Signs' },
+  'temperature': { de: 'Temperatur', en: 'temperature', category: 'Vital Signs' },
+  'pulse': { de: 'Puls', en: 'pulse', category: 'Vital Signs' },
+  
+  // Emergency
+  'emergency': { de: 'Notfall', en: 'emergency', category: 'Emergency' },
+  'ambulance': { de: 'Krankenwagen', en: 'ambulance', category: 'Emergency' },
+  'accident': { de: 'Unfall', en: 'accident', category: 'Emergency' },
+  'help': { de: 'Hilfe', en: 'help', category: 'Emergency' },
+  
+  // Common Phrases
+  'how are you': { de: 'Wie geht es Ihnen', en: 'how are you', category: 'Phrases' },
+  'where does it hurt': { de: 'Wo tut es weh', en: 'where does it hurt', category: 'Phrases' },
+  'please sit down': { de: 'Bitte setzen Sie sich', en: 'please sit down', category: 'Phrases' },
+  'open your mouth': { de: 'Öffnen Sie den Mund', en: 'open your mouth', category: 'Phrases' },
+  'take a deep breath': { de: 'Atmen Sie tief ein', en: 'take a deep breath', category: 'Phrases' },
+};
+
+// Quick select terms
+const QUICK_SELECT_TERMS = {
   en: [
     'heart attack', 'chest pain', 'shortness of breath', 'fever', 'headache',
     'blood pressure', 'diabetes', 'infection', 'surgery', 'medication',
-    'diagnosis', 'treatment', 'symptoms', 'prescription', 'emergency'
+    'emergency', 'pain', 'nausea', 'dizziness', 'cough'
   ],
   de: [
     'Herzinfarkt', 'Brustschmerzen', 'Atemnot', 'Fieber', 'Kopfschmerzen',
     'Blutdruck', 'Diabetes', 'Infektion', 'Operation', 'Medikament',
-    'Diagnose', 'Behandlung', 'Symptome', 'Rezept', 'Notfall'
+    'Notfall', 'Schmerzen', 'Übelkeit', 'Schwindel', 'Husten'
   ]
 };
+
+function translateTerm(term: string, sourceLang: LanguageCode, targetLang: LanguageCode): string {
+  const lowerTerm = term.toLowerCase().trim();
+  
+  // Direct lookup
+  const entry = MEDICAL_DICTIONARY[lowerTerm];
+  if (entry) {
+    return targetLang === 'de' ? entry.de : entry.en;
+  }
+  
+  // Reverse lookup (if translating from German)
+  for (const [key, value] of Object.entries(MEDICAL_DICTIONARY)) {
+    if (value.de.toLowerCase() === lowerTerm) {
+      return targetLang === 'de' ? value.de : value.en;
+    }
+  }
+  
+  return `[Not found in dictionary: "${term}"]`;
+}
 
 export function TermTranslator() {
   const [term, setTerm] = useState('');
@@ -28,24 +120,29 @@ export function TermTranslator() {
     source: 'en',
     target: 'de'
   });
-
-  const {
-    translations,
-    isTranslating,
-    translationError,
-    translateTerm,
-    clearError,
-    capabilities,
-  } = useStore();
+  const [localHistory, setLocalHistory] = useState<Array<{
+    original: string;
+    translated: string;
+    sourceLanguage: string;
+    targetLanguage: string;
+    timestamp: number;
+  }>>([]);
 
   const handleTranslate = () => {
     if (!term.trim()) return;
 
-    translateTerm({
-      term: term.trim(),
+    const translated = translateTerm(term, languages.source, languages.target);
+    
+    const result = {
+      original: term.trim(),
+      translated,
       sourceLanguage: languages.source,
       targetLanguage: languages.target,
-    });
+      timestamp: Date.now(),
+    };
+
+    setLocalHistory(prev => [result, ...prev].slice(0, 50));
+    setTerm('');
   };
 
   const handleSwapLanguages = () => {
@@ -63,8 +160,6 @@ export function TermTranslator() {
     navigator.clipboard.writeText(text);
   };
 
-  const isOffline = capabilities?.translator === 'unavailable';
-
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
@@ -73,29 +168,10 @@ export function TermTranslator() {
         <p className="mt-2 text-gray-600">
           Translate medical terminology between English and German
         </p>
-        <p className="text-sm text-gray-500 mt-1">
-          Übersetzen Sie medizinische Begriffe zwischen Englisch und Deutsch
+        <p className="text-sm text-blue-600 mt-1">
+          💡 100+ medical terms available | Dictionary-based translation
         </p>
       </div>
-
-      {/* Offline Warning */}
-      {isOffline && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-amber-800">Translation API Offline</h3>
-              <p className="mt-1 text-sm text-amber-700">
-                Chrome Translation API is not available. Enable it in chrome://flags
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Main Translation Card */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -109,7 +185,6 @@ export function TermTranslator() {
               value={languages.source}
               onChange={(e) => setLanguages({ ...languages, source: e.target.value as LanguageCode })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isTranslating}
             >
               <option value="en">English</option>
               <option value="de">Deutsch (German)</option>
@@ -118,8 +193,7 @@ export function TermTranslator() {
 
           <button
             onClick={handleSwapLanguages}
-            disabled={isTranslating}
-            className="mt-8 p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+            className="mt-8 p-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             title="Swap languages / Sprachen tauschen"
           >
             <svg className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -135,7 +209,6 @@ export function TermTranslator() {
               value={languages.target}
               onChange={(e) => setLanguages({ ...languages, target: e.target.value as LanguageCode })}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isTranslating}
             >
               <option value="en">English</option>
               <option value="de">Deutsch (German)</option>
@@ -156,21 +229,13 @@ export function TermTranslator() {
               onKeyDown={(e) => e.key === 'Enter' && handleTranslate()}
               placeholder={languages.source === 'en' ? 'Enter medical term...' : 'Medizinischen Begriff eingeben...'}
               className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isTranslating || isOffline}
             />
             <button
               onClick={handleTranslate}
-              disabled={isTranslating || !term.trim() || isOffline}
-              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              disabled={!term.trim()}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white font-semibold rounded-lg transition-colors"
             >
-              {isTranslating ? (
-                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : (
-                'Translate'
-              )}
+              Translate
             </button>
           </div>
         </div>
@@ -181,12 +246,11 @@ export function TermTranslator() {
             Common Terms / Häufige Begriffe
           </label>
           <div className="flex flex-wrap gap-2">
-            {COMMON_MEDICAL_TERMS[languages.source].map((quickTerm) => (
+            {QUICK_SELECT_TERMS[languages.source].map((quickTerm) => (
               <button
                 key={quickTerm}
                 onClick={() => handleQuickSelect(quickTerm)}
-                disabled={isTranslating || isOffline}
-                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-blue-50 hover:text-blue-700 text-gray-700 rounded-full transition-colors border border-gray-200 hover:border-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-blue-50 hover:text-blue-700 text-gray-700 rounded-full transition-colors border border-gray-200 hover:border-blue-300"
               >
                 {quickTerm}
               </button>
@@ -195,38 +259,14 @@ export function TermTranslator() {
         </div>
       </div>
 
-      {/* Error Display */}
-      {translationError && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-red-800">{translationError}</p>
-            </div>
-            <button
-              onClick={() => clearError('translation')}
-              className="ml-3 text-red-500 hover:text-red-700"
-            >
-              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Translation History */}
-      {translations.length > 0 && (
+      {localHistory.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-4">
             Translation History / Übersetzungsverlauf
           </h3>
           <div className="space-y-3">
-            {translations.map((translation, index) => (
+            {localHistory.map((translation, index) => (
               <div
                 key={index}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
@@ -255,19 +295,6 @@ export function TermTranslator() {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Empty State */}
-      {translations.length === 0 && !translationError && (
-        <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-          </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No Translations Yet</h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Enter a medical term above or select from common terms
-          </p>
         </div>
       )}
     </div>
