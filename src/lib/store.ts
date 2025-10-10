@@ -52,6 +52,7 @@ interface AppState {
   translateTerm: (params: TranslationParams) => Promise<void>;
   checkGrammar: (text: string) => Promise<void>;
   clearError: (type: 'scenario' | 'dialogue' | 'translation' | 'grammar') => void;
+
 }
 
 export const useStore = create<AppState>()(
